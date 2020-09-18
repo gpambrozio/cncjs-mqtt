@@ -1,7 +1,5 @@
-# cncjs-pendant-boilerplate
-A bare minimum example to develop a cncjs pendant.
-
-![image](https://cloud.githubusercontent.com/assets/447801/22881387/2b60de08-f221-11e6-9372-288e118788a9.png)
+# cncjs-pendant-mqtt
+Connect cncjs to an mqtt pendant. This could be used to connect it to your home automation system like home assistant. Useful for adding monitoring dashboards or automation.
 
 ## Installation
 ```
