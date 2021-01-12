@@ -1,13 +1,13 @@
 {
-  "name": "cncjs-pendant-mqtt",
+  "name": "cncjs-mqtt",
   "version": "0.1.0",
-  "description": "A bare minimum example to develop a cncjs pendant.",
+  "description": "An mqtt/websocket adapter for cncjs",
   "main": "./index.js",
   "engines": {
     "node": ">=4"
   },
   "bin": {
-    "cncjs-pendant-mqtt": "./bin/cncjs-pendant-mqtt"
+    "cncjs-pendant-mqtt": "./bin/cncjs-mqtt"
   },
   "preferGlobal": true,
   "scripts": {
