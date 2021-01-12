@@ -1,0 +1,109 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+// const get = require('lodash.get');
+const io = require('socket.io-client');
+const jwt = require('jsonwebtoken');
+const mqtt = require('mqtt');
+const path = require('path');
+const program = require('commander');
+// const serialport = require('serialport');
+
+
+program.usage('-s <secret> -p <port> [options]')
+       .option('--secret <secret>', 'the secret')
+       .option('--access-token-lifetime <lifetime>', 'access token lifetime in seconds or a time span string (default: 30d)', '30d')
+       .option('--port <port>', 'path or name of serial port')
+       .option('--baudrate <baudrate>', 'baud rate (default: 115200)', 115200)
+       .option('--controller-type <type>', 'controller type: Grbl|Smoothie|TinyG (default: Grbl)', 'Grbl')
+       .option('--cncjs-address <address>', 'server address or hostname (default: localhost)', 'localhost')
+       .option('--cncjs-port <port>', 'server port (default: 8000)', 8000)
+       .option('--mqtt-address <address>', 'server address or hostname (default: localhost)', 'localhost')
+       .option('--mqtt-port <port>', 'server port (default: 1883)', 1883)
+       .option('--mqtt-username <username>', 'mqtt user to connect as')
+       .option('--mqtt-password <password>', 'mqtt password for user')
+       .parse(process.argv);
+
+// Create auth token
+const token = jwt.sign({ id: '', name: 'cncjs-pendant' }, program.secret, {
+    expiresIn: program.accessTokenLifetime,
+});
+
+// Open connection to broker
+broker = mqtt.connect('mqtt://' + program.mqttAddress + ':' + program.mqttPort, {username: program.mqttUsername, password: program.mqttPassword});
+
+broker.on('connect', () => {
+    console.log('Connected to broker.');
+});
+
+broker.on('close', (err) => {
+    console.log('Connection to broker closed.', err);
+    process.exit(0);
+});
+
+broker.on('connect', () => {
+    // Open connection to cncjs
+    iface= io.connect('ws://' + program.cncjsAddress + ':' + program.cncjsPort, {
+        'query': 'token=' + token
+    });
+
+    iface.on('connect', () => {
+        console.log('Connected to server.');
+        broker.publish('cncjs', 'Connected to Server')
+
+        // Open port
+        iface.emit('open', program.port, {
+            baudrate: Number(program.baudrate),
+            controllerType: program.controllerType
+        });
+    });
+
+    iface.on('error', (err) => {
+        console.error('Connection error:', err);
+        process.exit(1);
+    });
+
+    iface.on('close', () => {
+        console.log('Connection closed.');
+        process.exit(0);
+    });
+
+    iface.on('serialport:open', () => {
+        console.log('Connected to controller.');
+    });
+
+    iface.on('serialport:error', (err) => {
+        console.error('Error opening serial port:', err);
+        process.exit(1);
+    });
+
+    // Grbl
+    iface.on('Grbl:state', (state) => {
+        console.log('State', state);
+        broker.publish('cncjs/state', JSON.stringify(state))
+    });
+
+    // workflow
+    iface.on('workflow:state', (state) => {
+        console.log('Workflow', state);
+        broker.publish('cncjs/workflow', JSON.stringify(state))
+    });
+
+    // feeder
+    iface.on('feeder:status', (state) => {
+        console.log('Feeder', state);
+        broker.publish('cncjs/feeder', JSON.stringify(state))
+    });
+
+    // sender
+    iface.on('sender:status', (state) => {
+        console.log('Sender', state);
+        broker.publish('cncjs/sender', JSON.stringify(state))
+    });
+
+    // settings
+    iface.on('Grbl:settings', (state) => {
+        console.log('Settings', state);
+        broker.publish('cncjs/settings', JSON.stringify(state))
+    });
+});
