@@ -3,6 +3,8 @@ Connect cncjs to an mqtt pendant. This could be used to connect it to your home 
 
 This is based on work started by https://git.maglab.space/fooker/cncjs-pendants/blob/master/cncjs-status-mqtt
 
+Still very much a work in progress, any updates before 1.0 probably won't be backwards compatible.
+
 ## Installation
 ```sh
 $ npm install
