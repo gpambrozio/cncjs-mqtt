@@ -33,11 +33,11 @@ sensor:
     json_attributes_topic: "<base topic>/state"
     json_attributes_template: "{{ value_json | tojson }}"
   - platform: mqtt
-    name: Cnc Controller Settings
-    state_topic: "<base topic>/settings"
-    value_template: "{{ value_json.version }}"
-    json_attributes_topic: "<base topic>/settings"
-    json_attributes_template: "{{ value_json.settings | tojson }}"
+    name: Cnc Controller Program Status
+    state_topic: "<base topic>/sender"
+    value_template: "{{ value_json.name }}"
+    json_attributes_topic: "<base topic>/sender"
+    json_attributes_template: "{{ value_json | tojson }}"
   - platform: mqtt
     name: Cnc Controller Instruction Queue
     state_topic: "<base topic>/feeder"
@@ -45,11 +45,11 @@ sensor:
     json_attributes_topic: "<base topic>/feeder"
     json_attributes_template: "{{ value_json | tojson }}"
   - platform: mqtt
-    name: Cnc Controller Program Status
-    state_topic: "<base topic>/sender"
-    value_template: "{{ value_json.name }}"
-    json_attributes_topic: "<base topic>/sender"
-    json_attributes_template: "{{ value_json | tojson }}"
+    name: Cnc Controller Settings
+    state_topic: "<base topic>/settings"
+    value_template: "{{ value_json.version }}"
+    json_attributes_topic: "<base topic>/settings"
+    json_attributes_template: "{{ value_json.settings | tojson }}"
   - platform: mqtt
     name: Cnc Controller Task Status
     state_topic: "<base topic>/task"
@@ -106,6 +106,42 @@ status:
 friendly_name: Cnc Controller State
 ```
 
+#### sensor.cnc_controller_program_status
+
+**State:** `my_gcode.nc` (Name of program)
+
+**Attributes:**
+```yaml
+context: {}
+elapsedTime: 0
+finishTime: 0
+hold: false
+holdReason: null
+name: 'my_gcode.nc'
+received: 0
+remainingTime: 0
+sent: 0
+size: 0
+sp: 1
+startTime: 0
+total: 0
+friendly_name: CNC Controller Program Status
+```
+
+#### sensor.cnc_controller_instruction_queue
+
+**State:** `0` (Queue size)
+
+**Attributes:**
+```yaml
+changed: false
+hold: false
+holdReason: null
+pending: false
+queue: 0
+friendly_name: CNC Controller Instruction Queue
+```
+
 #### sensor.cnc_controller_settings
 
 **State:** `1.1f` (reported firmware version)
@@ -147,42 +183,6 @@ $4: '0'
 $5: '0'
 $6: '0'
 friendly_name: CNC Controller Settings
-```
-
-#### sensor.cnc_controller_instruction_queue
-
-**State:** `0` (Queue size)
-
-**Attributes:**
-```yaml
-changed: false
-hold: false
-holdReason: null
-pending: false
-queue: 0
-friendly_name: CNC Controller Instruction Queue
-```
-
-#### sensor.cnc_controller_program_status
-
-**State:** `my_gcode.nc` (Name of program)
-
-**Attributes:**
-```yaml
-context: {}
-elapsedTime: 0
-finishTime: 0
-hold: false
-holdReason: null
-name: 'my_gcode.nc'
-received: 0
-remainingTime: 0
-sent: 0
-size: 0
-sp: 1
-startTime: 0
-total: 0
-friendly_name: CNC Controller Program Status
 ```
 
 #### sensor.cnc_controller_task_status
