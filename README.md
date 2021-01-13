@@ -13,16 +13,34 @@ $ npm install -g cncjs-mqtt
 ## Running
 
 ```sh
-$ cncjs-mqtt \
-    --cncjs-address 'localhost' \
-    --cncjs-port '8000' \
-    --secret 'your secret from .cncrc' \
-    --mqtt-address 'mqtt.server.local' \
-    --mqtt-username 'cncjs mqtt username' \
-    --mqtt-password 'secret stuff' \
-    --mqtt-port '1883' \
-    --port '/path/to/port'
+cncjs-mqtt \
+  --cncjs-address 'localhost' \
+  --cncjs-port '8000' \
+  --secret 'your secret from .cncrc' \
+  --mqtt-address 'mqtt.server.local' \
+  --mqtt-username 'cncjs mqtt username' \
+  --mqtt-password 'secret stuff' \
+  --mqtt-port '1883' \
+  --port '/path/to/port'
 ```
+
+You can omit `--secret` if you're running in the user folder with .cncrc in it.
+
+### Using PM2
+
+```sh
+pm2 start cncjs-mqtt -- \
+  --cncjs-address 'localhost' \
+  --cncjs-port '8000' \
+  --secret 'your secret from .cncrc' \
+  --mqtt-address 'mqtt.server.local' \
+  --mqtt-username 'cncjs mqtt username' \
+  --mqtt-password 'secret stuff' \
+  --mqtt-port '1883' \
+  --port '/path/to/port'
+```
+
+You can omit `--secret` if you're running in the user folder with .cncrc in it.
 
 ## Integration with home Assistant
 
