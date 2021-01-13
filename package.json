@@ -28,9 +28,9 @@
   "author": "Alex Ives <alex@ives.dev>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/alexives/cncjs-pendant-mqtt/issues"
+    "url": "https://gitlab.com/alexives/cncjs-mqtt/issues"
   },
-  "homepage": "https://github.com/alexives/cncjs-pendant-mqtt#readme",
+  "homepage": "https://gitlab.com/alexives/cncjs-mqtt",
   "dependencies": {
     "commander": "^5.0.0-4",
     "jsonwebtoken": "^8.5.1",
