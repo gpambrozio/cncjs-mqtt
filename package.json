@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alexives/cncjs-pendant-mqtt.git"
+    "url": "git+https://gitlab.com/alexives/cncjs-mqtt.git"
   },
   "keywords": [
     "cncjs",
@@ -25,7 +25,7 @@
     "automation",
     "home assistant"
   ],
-  "author": "Cheton Wu <cheton@gmail.com>",
+  "author": "Alex Ives <alex@ives.dev>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/alexives/cncjs-pendant-mqtt/issues"
