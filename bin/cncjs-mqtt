@@ -101,7 +101,7 @@ broker.on('connect', () => {
         process.exit(1);
     });
 
-    // Grbl
+    // state
     iface.on(`${program.controllerType}:state`, (state) => {
         console.log('State', state);
         broker.publish(`${program.mqttBaseTopic}/state`, JSON.stringify(state))
