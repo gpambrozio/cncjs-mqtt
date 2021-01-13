@@ -1,8 +1,8 @@
 module.exports = {
   apps : [
     {
-      name: 'cncjs-pendant-mqtt',
-      script: './index.js',
+      name: 'cncjs-mqtt',
+      script: './bin/cncjs-mqtt',
       watch: ['.']
     }
   ]
