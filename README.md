@@ -7,21 +7,21 @@ This is based on work started by https://git.maglab.space/fooker/cncjs-pendants/
 
 ## Installation
 ```sh
-$ npm install
+$ npm install -g cncjs-mqtt
 ```
 
 ## Running
 
 ```sh
-$ ./bin/cncjs-mqtt \
-      --cncjs-address 'localhost' \
-      --cncjs-port '8000' \
-      --secret 'your secret from .cncrc' \
-      --mqtt-address 'mqtt.server.local' \
-      --mqtt-username 'cncjs mqtt username' \
-      --mqtt-password 'secret stuff' \
-      --mqtt-port '1883' \
-      --port '/path/to/port'
+$ cncjs-mqtt \
+    --cncjs-address 'localhost' \
+    --cncjs-port '8000' \
+    --secret 'your secret from .cncrc' \
+    --mqtt-address 'mqtt.server.local' \
+    --mqtt-username 'cncjs mqtt username' \
+    --mqtt-password 'secret stuff' \
+    --mqtt-port '1883' \
+    --port '/path/to/port'
 ```
 
 ## Integration with home Assistant

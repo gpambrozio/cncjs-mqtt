@@ -30,7 +30,7 @@
   "bugs": {
     "url": "https://gitlab.com/alexives/cncjs-mqtt/issues"
   },
-  "homepage": "https://gitlab.com/alexives/cncjs-mqtt",
+  "homepage": "https://gitlab.com/alexives/cncjs-mqtt/-/blob/main/README.md",
   "dependencies": {
     "commander": "^5.0.0-4",
     "jsonwebtoken": "^8.5.1",
