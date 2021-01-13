@@ -33,11 +33,8 @@
   "homepage": "https://github.com/alexives/cncjs-pendant-mqtt#readme",
   "dependencies": {
     "commander": "^5.0.0-4",
-    "inquirer": "^7.1.0",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.15",
     "mqtt": "^4.2.6",
-    "socket.io-client": "^2.3.0",
-    "vorpal": "^1.12.0"
+    "socket.io-client": "^2.3.0"
   }
 }
