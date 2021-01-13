@@ -50,4 +50,10 @@ sensor:
     value_template: "{{ value_json.name }}"
     json_attributes_topic: "<base topic>/sender"
     json_attributes_template: "{{ value_json | tojson }}"
+  - platform: mqtt
+    name: Cnc Controller Task Status
+    state_topic: "<base topic>/task"
+    value_template: "{{ value_json.action }}"
+    json_attributes_topic: "<base topic>/sender"
+    json_attributes_template: "{{ value_json.state | tojson }}"
 ```

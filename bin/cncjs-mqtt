@@ -1,37 +1,60 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
-// const get = require('lodash.get');
 const io = require('socket.io-client');
 const jwt = require('jsonwebtoken');
 const mqtt = require('mqtt');
 const path = require('path');
 const program = require('commander');
-// const serialport = require('serialport');
+const { exit } = require('process');
 
 
-program.usage('-s <secret> -p <port> [options]')
+program.usage('cncjs-mqtt --secret <secret> --port <port> [options]')
        .option('--secret <secret>', 'the secret')
        .option('--access-token-lifetime <lifetime>', 'access token lifetime in seconds or a time span string (default: 30d)', '30d')
        .option('--port <port>', 'path or name of serial port')
        .option('--baudrate <baudrate>', 'baud rate (default: 115200)', 115200)
-       .option('--controller-type <type>', 'controller type: Grbl|Smoothie|TinyG (default: Grbl)', 'Grbl')
+       .option('--controller-type <type>', 'controller type: Grbl|Marlin|Smoothie|TinyG (default: Grbl)', 'Grbl')
        .option('--cncjs-address <address>', 'server address or hostname (default: localhost)', 'localhost')
        .option('--cncjs-port <port>', 'server port (default: 8000)', 8000)
        .option('--mqtt-address <address>', 'server address or hostname (default: localhost)', 'localhost')
        .option('--mqtt-port <port>', 'server port (default: 1883)', 1883)
-       .option('--mqtt-username <username>', 'mqtt user to connect as')
-       .option('--mqtt-password <password>', 'mqtt password for user')
+       .option('--mqtt-username <username>', 'mqtt user to connect as', null)
+       .option('--mqtt-password <password>', 'mqtt password for user', null)
        .option('--mqtt-base-topic <topic>', 'the mqtt topic to publish events to (default: cncjs)', 'cncjs')
        .parse(process.argv);
+
+if(program.port == null) {
+    console.log("Missing --port option must be specified for this to operate.")
+    console.log(program.usage())
+    exit(1)
+}
+
+if(program.secret == null) {
+    if(fs.existsSync(`${process.env.HOME}/.cncrc`)) {
+        program.secret = JSON.parse(fs.readFileSync(`${process.env.HOME}/.cncrc`, {encoding:'utf8'}))['secret']
+    } else {
+        console.log("Missing --secret option must be specified, could not find ~/.cncrc file to use")
+        console.log(program.usage())
+        exit(1)
+    }
+}
 
 // Create auth token
 const token = jwt.sign({ id: '', name: 'cncjs-pendant' }, program.secret, {
     expiresIn: program.accessTokenLifetime,
 });
 
+let options = {}
+if(program.mqttUsername != null && program.mqttPassword != null) {
+    options.username = program.mqttUsername
+    options.password = program.mqttPassword
+} else {
+    console.log('No mqtt username or password provided attempting to connect without them...')
+}
+
 // Open connection to broker
-broker = mqtt.connect('mqtt://' + program.mqttAddress + ':' + program.mqttPort, {username: program.mqttUsername, password: program.mqttPassword});
+broker = mqtt.connect(`mqtt://${program.mqttAddress}:${program.mqttPort}`, options);
 
 broker.on('connect', () => {
     console.log('Connected to broker.');
@@ -49,8 +72,8 @@ broker.on('connect', () => {
     });
 
     iface.on('connect', () => {
-        console.log('Connected to server.');
-        broker.publish(`${program.cncjsBaseTopic}', '`onnected to Server')
+        console.log(`Connected to server. Publishing to ${program.mqttBaseTopic}`);
+        broker.publish(`${program.mqttBaseTopic}`, 'Connected to Server')
 
         // Open port
         iface.emit('open', program.port, {
@@ -79,32 +102,47 @@ broker.on('connect', () => {
     });
 
     // Grbl
-    iface.on('Grbl:state', (state) => {
+    iface.on(`${program.controllerType}:state`, (state) => {
         console.log('State', state);
-        broker.publish(`${program.cncjsBaseTopic}/state`, JSON.stringify(state))
+        broker.publish(`${program.mqttBaseTopic}/state`, JSON.stringify(state))
+    });
+
+    // settings
+    iface.on(`${program.controllerType}:settings`, (state) => {
+        console.log('Settings', state);
+        broker.publish(`${program.mqttBaseTopic}/settings`, JSON.stringify(state))
     });
 
     // workflow
     iface.on('workflow:state', (state) => {
         console.log('Workflow', state);
-        broker.publish(`${program.cncjsBaseTopic}/workflow`, JSON.stringify(state))
+        broker.publish(`${program.mqttBaseTopic}/workflow`, JSON.stringify(state))
     });
 
     // feeder
     iface.on('feeder:status', (state) => {
         console.log('Feeder', state);
-        broker.publish(`${program.cncjsBaseTopic}/feeder`, JSON.stringify(state))
+        broker.publish(`${program.mqttBaseTopic}/feeder`, JSON.stringify(state))
     });
 
     // sender
     iface.on('sender:status', (state) => {
         console.log('Sender', state);
-        broker.publish(`${program.cncjsBaseTopic}/sender`, JSON.stringify(state))
+        broker.publish(`${program.mqttBaseTopic}/sender`, JSON.stringify(state))
     });
 
-    // settings
-    iface.on('Grbl:settings', (state) => {
-        console.log('Settings', state);
-        broker.publish(`${program.cncjsBaseTopic}/settings`, JSON.stringify(state))
+    iface.on('task:start', (state) => {
+        console.log('Task', state);
+        broker.publish(`${program.mqttBaseTopic}/task`, JSON.stringify({action: 'started', state: state}))
+    });
+
+    iface.on('task:finish', (state) => {
+        console.log('Task', state);
+        broker.publish(`${program.mqttBaseTopic}/task`, JSON.stringify({action: 'finished', state: state}))
+    });
+
+    iface.on('task:error', (state) => {
+        console.log('Task', state);
+        broker.publish(`${program.mqttBaseTopic}/task`, JSON.stringify({action: 'error', state: state}))
     });
 });
