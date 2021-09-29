@@ -66,6 +66,7 @@ broker.on('close', (err) => {
 });
 
 broker.on('connect', () => {
+    var statusInterval = setInterval(() => {}, 10000)
     // Open connection to cncjs
     iface= io.connect('ws://' + program.cncjsAddress + ':' + program.cncjsPort, {
         'query': 'token=' + token
@@ -105,6 +106,10 @@ broker.on('connect', () => {
     iface.on(`${program.controllerType}:state`, (state) => {
         console.log('State', state);
         broker.publish(`${program.mqttBaseTopic}/state`, JSON.stringify(state))
+        clearInterval(statusInterval)
+        statusInterval = setInterval((state) => {
+            broker.publish(`${program.mqttBaseTopic}/state`, JSON.stringify(state))
+        }, 10000, state)
     });
 
     // settings
