@@ -104,7 +104,7 @@ broker.on('connect', () => {
 
     // state
     iface.on(`${program.controllerType}:state`, (state) => {
-        console.log('State', state);
+        console.log('State');
         broker.publish(`${program.mqttBaseTopic}/state`, JSON.stringify(state))
         clearInterval(statusInterval)
         statusInterval = setInterval((state) => {
@@ -114,40 +114,40 @@ broker.on('connect', () => {
 
     // settings
     iface.on(`${program.controllerType}:settings`, (state) => {
-        console.log('Settings', state);
+        console.log('Settings');
         broker.publish(`${program.mqttBaseTopic}/settings`, JSON.stringify(state))
     });
 
     // workflow
     iface.on('workflow:state', (state) => {
-        console.log('Workflow', state);
+        console.log('Workflow');
         broker.publish(`${program.mqttBaseTopic}/workflow`, JSON.stringify(state))
     });
 
     // feeder
     iface.on('feeder:status', (state) => {
-        console.log('Feeder', state);
+        console.log('Feeder');
         broker.publish(`${program.mqttBaseTopic}/feeder`, JSON.stringify(state))
     });
 
     // sender
     iface.on('sender:status', (state) => {
-        console.log('Sender', state);
+        console.log('Sender');
         broker.publish(`${program.mqttBaseTopic}/sender`, JSON.stringify(state))
     });
 
     iface.on('task:start', (state) => {
-        console.log('Task', state);
+        console.log('Task');
         broker.publish(`${program.mqttBaseTopic}/task`, JSON.stringify({action: 'started', state: state}))
     });
 
     iface.on('task:finish', (state) => {
-        console.log('Task', state);
+        console.log('Task');
         broker.publish(`${program.mqttBaseTopic}/task`, JSON.stringify({action: 'finished', state: state}))
     });
 
     iface.on('task:error', (state) => {
-        console.log('Task', state);
+        console.log('Task');
         broker.publish(`${program.mqttBaseTopic}/task`, JSON.stringify({action: 'error', state: state}))
     });
 });
